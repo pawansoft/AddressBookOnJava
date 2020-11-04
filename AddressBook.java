@@ -1,7 +1,4 @@
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Scanner;
+import java.util.*;
 
 public class AddressBook {
     //Declaring HasMap to store all contact details
@@ -106,12 +103,10 @@ public class AddressBook {
         }
     }
 
-    public void deleteContact()
-    {
+    public void deleteContact() {
         System.out.println("Enter the email id to delete : ");
         String email = scanner.next();
-        if (!contactList.containsKey(email))
-        {
+        if (!contactList.containsKey(email)) {
             System.out.println("Please provide valid email id");
             deleteContact();
         }
@@ -119,21 +114,40 @@ public class AddressBook {
     }
 
     //This method is used to print the contact details
-    public void printAllDetails()
-    {
+    public void printAllDetails() {
         System.out.println(contactList);
     }
 
+    public void searchByCityorState(){
+
+        System.out.println("Enter city name : ");
+        String city = scanner.next();
+        System.out.println("Enter state name : ");
+        String state = scanner.next();
+        System.out.println("Iterate over HashMap Keys and Values");
+
+        for (ContactDetails i : contactList.values()) {
+            System.out.println(i);
+            if(i.getCity() == city || i.getState() == state)
+            {
+                System.out.println("from condition"+i);
+            }
+            else {
+                System.out.println("value not fount");
+            }
+        }
+    }
+
     // This function will be used to ask the user choice
-    public void getUserChoice()
-    {
+    public void getUserChoice() {
         boolean isTerminate = false;
         while (!isTerminate){
             System.out.println("1: For add new contact \n" +
                     "2: For update existing contact \n" +
                     "3: For print contact list \n" +
                     "4: For delete contact \n" +
-                    "0: For terminate the program");
+                    "5: For search by city name or state : \n" +
+                    "0: For terminate the program \n");
             int selectedOption = scanner.nextInt();
             switch (selectedOption){
                 case 1:
@@ -147,6 +161,9 @@ public class AddressBook {
                     break;
                 case 4:
                     deleteContact();
+                    break;
+                case 5:
+                    searchByCityorState();
                     break;
                 case 0:
                     isTerminate = true;
