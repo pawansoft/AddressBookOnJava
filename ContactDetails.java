@@ -9,9 +9,22 @@ public class ContactDetails {
     private String phoneNumber;
     private String emailId;
 
+
+    public ContactDetails() {
+    }
+
+    public ContactDetails(String fName, String lName, String address, String city, String state, int zip, String phoneNumber, String emailId) {
+        this.fName = fName;
+        this.lName = lName;
+        this.address = address;
+        this.city = city;
+        this.state = state;
+        this.zip = zip;
+        this.phoneNumber = phoneNumber;
+        this.emailId = emailId;
+    }
+
     //generating getter setter method to add or populate the value form variable
-
-
     public String getfName() {
         return fName;
     }
@@ -90,5 +103,15 @@ public class ContactDetails {
                 ", phoneNumber=" + phoneNumber +
                 ", emailId='" + emailId + '\'' +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof ContactDetails){
+            ContactDetails contactDetails = (ContactDetails) obj;
+            return (contactDetails.fName.equals(this.fName) && contactDetails.fName == this.fName);
+        }else {
+            return false;
+        }
     }
 }
