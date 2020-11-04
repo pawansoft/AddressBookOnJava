@@ -43,17 +43,23 @@ public class AddressBook {
         contactList.put(contactDetails.getEmailId(), contactDetails);
     }
 
-    public void updateContactDetail(String emailId){
-        ContactDetails contactDetails = contactList.get(emailId);
+    public void updateContactDetail(){
+        System.out.println("Enter email id too update : ");
+        String email = scanner.next();
+        ContactDetails contactDetails = contactList.get(email);
+        if(!contactList.containsKey(email))
+        {
+            System.out.println("Invalid email id");
+            updateContactDetail();
+        }
 
         System.out.println("1 : For first name \n" +
                 "2 : For Last Name \n" +
-                "3 : For email id \n" +
-                "4 : For phone number \n" +
-                "5 : For address \n" +
-                "6 : For zip code \n" +
-                "7 : For city \n" +
-                "8 : For state");
+                "3 : For phone number \n" +
+                "4 : For address \n" +
+                "5 : For zip code \n" +
+                "6 : For city \n" +
+                "7 : For state");
         int selectOption = scanner.nextInt();
 
         switch (selectOption){
@@ -68,31 +74,26 @@ public class AddressBook {
                 contactDetails.setlName(lName);
                 break;
             case 3:
-                System.out.println("Enter email id : ");
-                String email = scanner.next();
-                contactDetails.setEmailId(emailId);
-                break;
-            case 4:
                 System.out.println("Enter phone number : ");
                 String phone = scanner.next();
                 contactDetails.setPhoneNumber(phone);
                 break;
-            case 5:
+            case 4:
                 System.out.println("Enter address : ");
                 String address = scanner.next();
                 contactDetails.setAddress(address);
                 break;
-            case 6:
+            case 5:
                 System.out.println("Enter zip code : ");
                 int zipCode = scanner.nextInt();
                 contactDetails.setZip(zipCode);
                 break;
-            case 7:
+            case 6:
                 System.out.println("Enter City");
                 String city = scanner.next();
                 contactDetails.setCity(city);
                 break;
-            case 8:
+            case 7:
                 System.out.println("Enter state");
                 String state = scanner.next();
                 contactDetails.setState(state);
@@ -101,6 +102,18 @@ public class AddressBook {
                 System.out.println("please select valid option");
                 break;
         }
+    }
+
+    public void deleteContact()
+    {
+        System.out.println("Enter the email id to delete : ");
+        String email = scanner.next();
+        if (!contactList.containsKey(email))
+        {
+            System.out.println("Please provide valid email id");
+            deleteContact();
+        }
+        contactList.remove(email);
     }
 
     //This method is used to print the contact details
@@ -116,6 +129,7 @@ public class AddressBook {
             System.out.println("1: For add new contact \n" +
                     "2: For update existing contact \n" +
                     "3: For print contact list \n" +
+                    "4: For delete contact \n" +
                     "0: For terminate the program");
             int selectedOption = scanner.nextInt();
             switch (selectedOption){
@@ -123,12 +137,13 @@ public class AddressBook {
                     addNewContact();
                     break;
                 case 2:
-                    System.out.println("Enter email id to update");
-                    String email = scanner.next();
-                    updateContactDetail(email);
+                    updateContactDetail();
                     break;
                 case 3:
                     printAllDetails();
+                    break;
+                case 4:
+                    deleteContact();
                     break;
                 case 0:
                     System.exit(0);
