@@ -122,45 +122,33 @@ public class AddressBook {
     }
 
     public void searchByCityOrState(){
-
+    
         System.out.println("Enter city name : ");
         String city = scanner.next();
         System.out.println("Enter state name : ");
         String state = scanner.next();
-        System.out.println("Iterate over HashMap Keys and Values");
 
-        for (ContactDetails allDetail : contactList.values()) {
-            System.out.println("fetched city" +allDetail.getCity() + "fetched state" + allDetail.getState());
-            if(allDetail.getCity().contains(city) || allDetail.getState().contains(state))
-            {
-                System.out.println("from condition"+allDetail);
-            }
-            else {
-                System.out.println("value not fount");
-            }
-        }
+        Map<String, ContactDetails> filterDetail = contactList.entrySet()
+                .stream()
+                .filter(map -> map.getValue().getState().contains(state))
+                .filter(map -> map.getValue().getCity().contains(city))
+                .collect(Collectors.toMap(map -> map.getKey(), map -> map.getValue()));
+        System.out.println(filterDetail);
     }
 
     public void countByCityOrState(){
-        int count=0;
         System.out.println("Enter city name : ");
         String city = scanner.next();
         System.out.println("Enter state name : ");
         String state = scanner.next();
-        System.out.println("Iterate over HashMap Keys and Values");
 
-        for (ContactDetails allDetail : contactList.values()) {
-            System.out.println("fetched city" +allDetail.getCity() + "fetched state" + allDetail.getState());
-            if(allDetail.getCity().contains(city) || allDetail.getState().contains(state))
-            {
-                count = count +1;
-            }
-            else {
-                System.out.println("value not fount");
-            }
-        }
-
-        System.out.println("Number of address belong to same city or state are : " +count);
+        Map<ContactDetails, Long> filteredCountContact = contactList.values()
+                .stream()
+                .filter(map -> map.getState().contains(state))
+                .filter(map -> map.getCity().contains(city))
+                .collect(Collectors.groupingBy(v -> v, Collectors.counting()));
+ 
+        System.out.println(filteredCountContact);
     }
 
     // This function will be used to ask the user choice
