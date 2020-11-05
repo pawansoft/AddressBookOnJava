@@ -11,23 +11,32 @@ public class AddressBookMain {
         while (true) {
             System.out.println("1: for create new AddressBook \n" +
                     "2: for access existing AddressBook \n" +
-                    "3: for terminate the program");
+                    "0: for terminate the program");
             int selectedOption = scanner.nextInt();
 
             switch (selectedOption) {
                 case 1:
                     System.out.println("Enter AddressBook Name : ");
                     String addressBookName = scanner.next();
-                    AddressBook addressBooName = new AddressBook();
-                    addressBookList.put(addressBookName, addressBooName);
+
+                    if (addressBookList.containsKey(addressBookName)) {
+                        System.out.println("This addressBook already exist");
+                    }else {
+                        AddressBook addressBooName = new AddressBook();
+                        addressBookList.put(addressBookName, addressBooName);
+                    }
                     break;
                 case 2:
                     System.out.println(addressBookList.keySet() + "\n" +
                             "Choose any of AddressBook");
                     String selectedAddressBook = scanner.next();
 
-                    AddressBook searchedAddressBook = addressBookList.get(selectedAddressBook);
-                    searchedAddressBook.getUserChoice();
+                    if (!addressBookList.containsKey(selectedAddressBook)){
+                        System.out.println("Please provide valid AddressBook name");
+                    }else {
+                        AddressBook searchedAddressBook = addressBookList.get(selectedAddressBook);
+                        searchedAddressBook.getUserChoice();
+                    }
                     break;
                 case 0:
                     System.exit(0);
@@ -35,7 +44,6 @@ public class AddressBookMain {
                 default:
                     System.out.println("Please select valid option");
                     break;
-
             }
         }
     }
