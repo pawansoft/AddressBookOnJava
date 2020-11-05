@@ -126,11 +126,11 @@ public class AddressBook {
         String state = scanner.next();
         System.out.println("Iterate over HashMap Keys and Values");
 
-        for (ContactDetails i : contactList.values()) {
+        for (ContactDetails allDetail : contactList.values()) {
             System.out.println(i);
-            if(i.getCity() == city || i.getState() == state)
+            if(allDetail.getCity().contains(city) || allDetail.getState().contains(city))
             {
-                System.out.println("from condition"+i);
+                System.out.println("from condition"+allDetail);
             }
             else {
                 System.out.println("value not fount");
