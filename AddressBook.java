@@ -1,4 +1,5 @@
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class AddressBook {
     //Declaring HasMap to store all contact details
@@ -124,18 +125,14 @@ public class AddressBook {
         String city = scanner.next();
         System.out.println("Enter state name : ");
         String state = scanner.next();
-        System.out.println("Iterate over HashMap Keys and Values");
 
-        for (ContactDetails allDetail : contactList.values()) {
-            System.out.println(i);
-            if(allDetail.getCity().contains(city) || allDetail.getState().contains(city))
-            {
-                System.out.println("from condition"+allDetail);
-            }
-            else {
-                System.out.println("value not fount");
-            }
-        }
+        Map<String, ContactDetails> filteredContact = contactList.entrySet()
+                .stream()
+                .filter(map -> map.getValue().getState().contains(state))
+                .filter(map -> map.getValue().getCity().contains(city))
+                .collect(Collectors.toMap(map -> map.getKey(), map -> map.getValue()));
+
+        System.out.println(filteredContact);
     }
 
     // This function will be used to ask the user choice
