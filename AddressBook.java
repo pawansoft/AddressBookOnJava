@@ -4,7 +4,6 @@ import java.util.stream.Collectors;
 public class AddressBook {
     //Declaring HasMap to store all contact details
     HashMap<String, ContactDetails> contactList = new HashMap<String, ContactDetails>();
-    List <ContactDetails> valueList=new ArrayList<ContactDetails>(contactList.values());
 
     Scanner scanner = new Scanner(System.in);
 
@@ -40,8 +39,11 @@ public class AddressBook {
     }
 
     public void addNewContact() {
-        ContactDetails contactDetails = getDetailsFromUser();
-        contactList.put(contactDetails.getEmailId(), contactDetails);
+        testDataProvider testDataProviders = new testDataProvider();
+//        ContactDetails contactDetails = getDetailsFromUser();
+//        contactList.put(contactDetails.getEmailId(), contactDetails);
+
+        contactList = testDataProviders.sampleData();
     }
 
     public void updateContactDetail(){
@@ -141,8 +143,8 @@ public class AddressBook {
 
         Map<String, ContactDetails> filterDetail = contactList.entrySet()
                 .stream()
-                .filter(map -> map.getValue().getState().contains(state))
-                .filter(map -> map.getValue().getCity().contains(city))
+                .filter(map -> map.getValue().getState().equals(state))
+                .filter(map -> map.getValue().getCity().equals(city))
                 .collect(Collectors.toMap(map -> map.getKey(), map -> map.getValue()));
 
         System.out.println(filterDetail);
@@ -164,22 +166,47 @@ public class AddressBook {
         System.out.println(filteredCountContact);
     }
 
+
+    public void storeInDictIfBelongToSameCityOrState(){
+
+        System.out.println("Enter city name : ");
+        String city = scanner.next();
+        System.out.println("Enter state name : ");
+        String state = scanner.next();
+
+        List <ContactDetails> filterValueToStore = contactList.values()
+                .stream()
+                .filter(map -> map.getState().contains(state))
+                .filter(map -> map.getCity().contains(city))
+                .collect(Collectors.toList());
+
+        System.out.println(filterValueToStore);
+    }
+
     public void shortContactListByFName() {
+        List <ContactDetails> valueList=new ArrayList<ContactDetails>(contactList.values());
+
         valueList.sort((ContactDetails obj1, ContactDetails obj2) -> obj1.getfName().compareTo(obj2.getfName()));
         valueList.forEach((shortedContact)->System.out.println(shortedContact));
     }
 
     public void shortContactListByCity() {
+        List <ContactDetails> valueList=new ArrayList<ContactDetails>(contactList.values());
+
         valueList.sort((ContactDetails obj1, ContactDetails obj2) -> obj1.getCity().compareTo(obj2.getCity()));
         valueList.forEach((shortedContact) -> System.out.println(shortedContact));
     }
 
     public void shortContactListByState() {
+        List <ContactDetails> valueList=new ArrayList<ContactDetails>(contactList.values());
+
         valueList.sort((ContactDetails obj1, ContactDetails obj2) -> obj1.getState().compareTo(obj2.getState()));
         valueList.forEach((shortedContact) -> System.out.println(shortedContact));
     }
 
     public void shortContactListByZipCode() {
+        List <ContactDetails> valueList=new ArrayList<ContactDetails>(contactList.values());
+
         valueList.sort((ContactDetails obj1, ContactDetails obj2) -> obj1.getZip() - obj2.getZip());
         valueList.forEach((shortedList) -> System.out.println(shortedList));
     }
@@ -198,7 +225,8 @@ public class AddressBook {
                     "7: For sort by first name \n" +
                     "8: For sort by state \n" +
                     "9: For sort by city \n" +
-                    "10: For sort by zipCode" +
+                    "10: For sort by zipCode \n" +
+                    "11: For store in dictionary \n" +
                     "0: For terminate the program \n");
             int selectedOption = scanner.nextInt();
 
@@ -241,6 +269,10 @@ public class AddressBook {
 
                 case 10:
                     shortContactListByZipCode();
+                    break;
+
+                case 11:
+                    storeInDictIfBelongToSameCityOrState();
                     break;
 
                 case 0:
