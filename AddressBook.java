@@ -1,3 +1,5 @@
+import java.io.*;
+import java.nio.channels.FileChannel;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -42,8 +44,7 @@ public class AddressBook {
         testDataProvider testDataProviders = new testDataProvider();
 //        ContactDetails contactDetails = getDetailsFromUser();
 //        contactList.put(contactDetails.getEmailId(), contactDetails);
-
-        contactList = testDataProviders.sampleData();
+        contactList =  testDataProviders.sampleData();
     }
 
     public void updateContactDetail(){
@@ -227,6 +228,8 @@ public class AddressBook {
                     "9: For sort by city \n" +
                     "10: For sort by zipCode \n" +
                     "11: For store in dictionary \n" +
+                    "12: For all details into hashMap \n" +
+                    "13: For reading from the file \n" +
                     "0: For terminate the program \n");
             int selectedOption = scanner.nextInt();
 
@@ -275,6 +278,18 @@ public class AddressBook {
                     storeInDictIfBelongToSameCityOrState();
                     break;
 
+                case 12:
+                    if(writeAddressInToFile(contactList)== true){
+                        System.out.println("File added successfully");
+                    }
+                    else {
+                        System.out.println("File not added !!");
+                    }
+                    break;
+                case 13:
+                    ReadingFromFile();
+                    break;
+
                 case 0:
                     isTerminate = true;
                     break;
@@ -284,6 +299,44 @@ public class AddressBook {
                     break;
             }
         }
+    }
+    public boolean writeAddressInToFile(HashMap<String, ContactDetails> map)
+    {
+        try {
+                File file = new File("/home/pawan/Desktop/PlayGround/AddressBook.txt");
+                FileOutputStream fileOutputStream = new FileOutputStream(file);
+                PrintWriter printWriter = new PrintWriter(fileOutputStream);
+
+                for (Map.Entry<String, ContactDetails> m :map.entrySet()){
+                    printWriter.println(m.getKey()+ "_" +m.getValue());
+                }
+                printWriter.flush();
+                printWriter.close();
+                fileOutputStream.close();
+
+            if(file.exists()){
+                return true;
+            }
+
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+        return false;
+    }
+
+    public void ReadingFromFile(){
+        try (InputStream inputStream = new FileInputStream("/home/pawan/Desktop/PlayGround/AddressBook.txt")){
+            Map<String, Object> loadedDataOfTextFile = new HashMap<>();
+            Properties properties = new Properties();
+            properties.load(inputStream);
+            properties.forEach((key, value) -> loadedDataOfTextFile.put(String.valueOf(key.toString()), value));
+           loadedDataOfTextFile.forEach((key, value) -> {
+               System.out.println("Key : " + key + " " +value);
+           });
+        }catch (IOException ie){
+            ie.printStackTrace();
+        }
 
     }
+
 }
