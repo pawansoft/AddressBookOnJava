@@ -5,14 +5,14 @@ public class ContactDetails {
     private String address;
     private String city;
     private String state;
-    private int zip;
+    private String zip;
     private String phoneNumber;
     private String emailId;
 
     public ContactDetails() {
     }
 
-    public ContactDetails(String fName, String lName, String address, String city, String state, int zip, String phoneNumber, String emailId) {
+    public ContactDetails(String fName, String lName, String address, String city, String state, String zip, String phoneNumber, String emailId) {
         this.fName = fName;
         this.lName = lName;
         this.address = address;
@@ -64,11 +64,11 @@ public class ContactDetails {
         this.state = state;
     }
 
-    public int getZip() {
+    public String getZip() {
         return zip;
     }
 
-    public void setZip(int zip) {
+    public void setZip(String zip) {
         this.zip = zip;
     }
 

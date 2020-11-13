@@ -1,11 +1,17 @@
 import java.io.*;
 import java.nio.channels.FileChannel;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class AddressBook {
     //Declaring HasMap to store all contact details
     HashMap<String, ContactDetails> contactList = new HashMap<String, ContactDetails>();
+
+    public AddressBook(){
+       contactList = detailLoader();
+    }
 
     Scanner scanner = new Scanner(System.in);
 
@@ -21,7 +27,7 @@ public class AddressBook {
         System.out.println("Enter address : ");
         String address = scanner.next();
         System.out.println("Enter zip code : ");
-        int zip = scanner.nextInt();
+        String zip = scanner.next();
         System.out.println("Enter city : ");
         String city = scanner.next();
         System.out.println("Enter state : ");
@@ -41,10 +47,24 @@ public class AddressBook {
     }
 
     public void addNewContact() {
-        testDataProvider testDataProviders = new testDataProvider();
-//        ContactDetails contactDetails = getDetailsFromUser();
-//        contactList.put(contactDetails.getEmailId(), contactDetails);
-        contactList =  testDataProviders.sampleData();
+        System.out.println("Select 1 : for add manual" +
+                "Select 2 : for add from test data");
+        int selectedOption = scanner.nextInt();
+        if (selectedOption == 1){
+            ContactDetails contactDetails = getDetailsFromUser();
+            contactList.put(contactDetails.getEmailId(), contactDetails);
+            writeAddressInToFile(contactList);
+        }
+        else if(selectedOption == 2){
+            testDataProvider testDataProviders = new testDataProvider();
+            contactList =  testDataProviders.sampleData();
+            writeAddressInToFile(contactList);
+        }
+        else{
+            System.out.println("Please Select valid option");
+            addNewContact();
+        }
+
     }
 
     public void updateContactDetail(){
@@ -94,7 +114,7 @@ public class AddressBook {
 
             case 5:
                 System.out.println("Enter zip code : ");
-                int zipCode = scanner.nextInt();
+                String zipCode = scanner.next();
                 contactDetails.setZip(zipCode);
                 break;
 
@@ -114,6 +134,7 @@ public class AddressBook {
                 System.out.println("please select valid option");
                 break;
         }
+        writeAddressInToFile(contactList);
     }
 
     public void deleteContact() {
@@ -124,13 +145,13 @@ public class AddressBook {
             System.out.println("Please provide valid email id");
             deleteContact();
         }
-
         contactList.remove(email);
+        writeAddressInToFile(contactList);
     }
 
     //This method is used to print the contact details
     public void printAllDetails() {
-        for (ContactDetails allContacts : contactList.values()) {
+        for (Object allContacts : contactList.values()) {
             System.out.println(allContacts);
         }
     }
@@ -208,7 +229,7 @@ public class AddressBook {
     public void shortContactListByZipCode() {
         List <ContactDetails> valueList=new ArrayList<ContactDetails>(contactList.values());
 
-        valueList.sort((ContactDetails obj1, ContactDetails obj2) -> obj1.getZip() - obj2.getZip());
+        valueList.sort((ContactDetails obj1, ContactDetails obj2) -> obj1.getZip().compareTo(obj2.getZip()));
         valueList.forEach((shortedList) -> System.out.println(shortedList));
     }
 
@@ -228,8 +249,6 @@ public class AddressBook {
                     "9: For sort by city \n" +
                     "10: For sort by zipCode \n" +
                     "11: For store in dictionary \n" +
-                    "12: For all details into hashMap \n" +
-                    "13: For reading from the file \n" +
                     "0: For terminate the program \n");
             int selectedOption = scanner.nextInt();
 
@@ -279,15 +298,7 @@ public class AddressBook {
                     break;
 
                 case 12:
-                    if(writeAddressInToFile(contactList)== true){
-                        System.out.println("File added successfully");
-                    }
-                    else {
-                        System.out.println("File not added !!");
-                    }
-                    break;
-                case 13:
-                    ReadingFromFile();
+                    this.detailLoader();
                     break;
 
                 case 0:
@@ -300,43 +311,65 @@ public class AddressBook {
             }
         }
     }
-    public boolean writeAddressInToFile(HashMap<String, ContactDetails> map)
+    public void writeAddressInToFile(HashMap<String, ContactDetails> contactDetailsList)
     {
-        try {
-                File file = new File("/home/pawan/Desktop/PlayGround/AddressBook.txt");
-                FileOutputStream fileOutputStream = new FileOutputStream(file);
-                PrintWriter printWriter = new PrintWriter(fileOutputStream);
 
-                for (Map.Entry<String, ContactDetails> m :map.entrySet()){
-                    printWriter.println(m.getKey()+ "_" +m.getValue());
-                }
-                printWriter.flush();
-                printWriter.close();
-                fileOutputStream.close();
-
-            if(file.exists()){
-                return true;
-            }
-
-        }catch (Exception e){
-            System.out.println(e.getMessage());
+        File file = new File("/home/pawan/Desktop/PlayGround/AddressBook.txt");
+        if(file.exists()){
+            file.delete();
         }
-        return false;
+        BufferedWriter bufferedWriter = null;
+        try {
+            bufferedWriter = new BufferedWriter(new FileWriter(file));
+
+            for (Map.Entry<String, ContactDetails> entry : contactList.entrySet()){
+                bufferedWriter.write(entry.getKey() + ":" +entry.getValue());
+
+                bufferedWriter.newLine();
+            }
+            bufferedWriter.flush();
+        }catch (IOException e){
+            e.printStackTrace();
+        }finally {
+            try {
+                bufferedWriter.close();
+            }
+            catch (Exception e){}
+        }
     }
 
-    public void ReadingFromFile(){
+    public HashMap detailLoader(){
         try (InputStream inputStream = new FileInputStream("/home/pawan/Desktop/PlayGround/AddressBook.txt")){
-            Map<String, Object> loadedDataOfTextFile = new HashMap<>();
+            HashMap<String, String> loadedDataOfTextFile = new HashMap<>();
             Properties properties = new Properties();
             properties.load(inputStream);
-            properties.forEach((key, value) -> loadedDataOfTextFile.put(String.valueOf(key.toString()), value));
-           loadedDataOfTextFile.forEach((key, value) -> {
-               System.out.println("Key : " + key + " " +value);
-           });
-        }catch (IOException ie){
+            properties.forEach((key, value) -> loadedDataOfTextFile.put(String.valueOf(key.toString()), value.toString()));
+            loadedDataOfTextFile.forEach((key, value) -> {
+                ContactDetails contactDetails = new ContactDetails();
+
+                String [] words= value.toLowerCase().split("'");
+                String details[] = words[10].split("=");
+                String pin[] = details[1].split(",");
+                String []phoneNumber = details[2].split(",");
+
+                contactDetails.setfName(words[1]);
+                contactDetails.setlName(words[3]);
+                contactDetails.setAddress(words[5]);
+                contactDetails.setCity(words[7]);
+                contactDetails.setState(words[9]);
+                contactDetails.setPhoneNumber(phoneNumber[0]);
+                contactDetails.setEmailId(key);
+                contactDetails.setZip(pin[0]);
+                contactList.put(key, contactDetails);
+
+            });
+
+            return loadedDataOfTextFile;
+        }
+        catch (IOException ie){
             ie.printStackTrace();
         }
-
+        return null;
     }
 
 }
